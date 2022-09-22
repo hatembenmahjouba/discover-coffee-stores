@@ -46,7 +46,6 @@ const CoffeeStore = (initialProps) => {
   } = useContext(StoreContext);
   const handleCreateCoffeeStore = async (coffeeStore) => {
     try {
-      console.log(coffeeStore);
       const { id, name, voting, imgUrl, neighbourhood, address } = coffeeStore;
       const response = await fetch('/api/createCoffeeStore', {
         method: 'POST',
@@ -64,7 +63,6 @@ const CoffeeStore = (initialProps) => {
       });
 
       const dbCoffeeStore = response.json();
-      console.log(dbCoffeeStore);
     } catch (error) {
       console.error('Error creating coffee store');
     }
@@ -85,14 +83,16 @@ const CoffeeStore = (initialProps) => {
     }
   }, [id, initialProps, coffeeStores, initialProps.coffeeStore]);
 
+  const { address, neighbourhood, name, imgUrl } = coffeeStore;
+  const [votingCount, setVotingCount] = useState(1);
+  const handleUpvoteButton = () => {
+    let count = votingCount + 1;
+    setVotingCount(count);
+  };
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-
-  const { address, neighbourhood, name, imgUrl } = coffeeStore;
-  const handleUpvoteButton = () => {
-    console.log('Up vote button');
-  };
   return (
     <div className={styles.layout}>
       <Head>
@@ -121,18 +121,33 @@ const CoffeeStore = (initialProps) => {
         </div>
         <div className={cls('glass', styles.col2)}>
           <div className={styles.iconWrapper}>
-            <Image src='/static/icons/location.svg' width='24' height='24' />
+            <Image
+              alt='location'
+              src='/static/icons/location.svg'
+              width='24'
+              height='24'
+            />
             <p className={styles.text}>{address}</p>
           </div>
           {neighbourhood && (
             <div className={styles.iconWrapper}>
-              <Image src='/static/icons/nearMe.svg' width='24' height='24' />
+              <Image
+                alt='near me'
+                src='/static/icons/nearMe.svg'
+                width='24'
+                height='24'
+              />
               <p className={styles.text}>{neighbourhood}</p>
             </div>
           )}
           <div className={styles.iconWrapper}>
-            <Image src='/static/icons/star.svg' width='24' height='24' />
-            <p className={styles.text}>1</p>
+            <Image
+              alt='voting'
+              src='/static/icons/star.svg'
+              width='24'
+              height='24'
+            />
+            <p className={styles.text}>{votingCount}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
             Up vote!
