@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import cls from 'classnames';
-
+import useSWR from 'swr';
 import styles from '../../styles/coffee-store.module.css';
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
 import { useContext, useEffect, useState } from 'react';
@@ -81,10 +81,20 @@ const CoffeeStore = (initialProps) => {
     } else {
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps, coffeeStores, initialProps.coffeeStore]);
+  }, [id, initialProps, initialProps.coffeeStore]);
 
   const { address, neighbourhood, name, imgUrl } = coffeeStore;
   const [votingCount, setVotingCount] = useState(1);
+
+  const fetcher = (...args) => fetch(...args).then((res) => res.json());
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setCoffeeStore(data[0]);
+      setVotingCount(data[0].voting);
+    }
+  }, [data]);
   const handleUpvoteButton = () => {
     let count = votingCount + 1;
     setVotingCount(count);
@@ -92,6 +102,9 @@ const CoffeeStore = (initialProps) => {
 
   if (router.isFallback) {
     return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Something went wrong retrieving coffee store page</div>;
   }
   return (
     <div className={styles.layout}>
