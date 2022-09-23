@@ -81,10 +81,10 @@ const CoffeeStore = (initialProps) => {
     } else {
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps, initialProps.coffeeStore]);
+  }, [id, initialProps, initialProps.coffeeStore, coffeeStores]);
 
   const { address, neighbourhood, name, imgUrl } = coffeeStore;
-  const [votingCount, setVotingCount] = useState(1);
+  const [votingCount, setVotingCount] = useState(0);
 
   const fetcher = (...args) => fetch(...args).then((res) => res.json());
   const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);

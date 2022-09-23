@@ -15,6 +15,7 @@
 
 .heroImage {
   position: absolute;
+  pointer-events: none;
   top: 0px;
   z-index: 1;
 }

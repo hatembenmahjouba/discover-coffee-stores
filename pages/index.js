@@ -45,7 +45,7 @@ export default function Home(props) {
           });
           setCoffeeStoresError('');
         } catch (err) {
-          console.log(err);
+          console.error(err);
           setCoffeeStoresError(err.message);
         }
       }
